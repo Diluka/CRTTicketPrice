@@ -49,9 +49,10 @@ public class MainActivity extends OrmLiteBaseActivity<DatabaseHelper> {
     }
 
     private void checkDatabase(TextView tv){
-        RuntimeExceptionDao<TicketPrice,Integer> dao=getHelper().getRuntimeExceptionDao(TicketPrice.class);
+        RuntimeExceptionDao<TicketPrice,Integer> dao=getHelper().getTicketPriceDao();
         long count=dao.countOf();
         tv.setText(String.format(getString(R.string.db_result_tpl),count));
+
     }
 
     private void bindComponents(){

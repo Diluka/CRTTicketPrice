@@ -2,6 +2,7 @@ package com.github.diluka.crtticketprice.util;
 
 import android.content.Context;
 import android.util.Log;
+
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.util.zip.GZIPInputStream;
 
 /**
  * JSON数据读取器
+ *
  * @author Diluka
  */
 public class JSONDataLoader {
@@ -22,16 +24,17 @@ public class JSONDataLoader {
         this.context = ctx;
     }
 
-    public <T> T loadJson(Class<T> clazz, int resId) {
+    public <T> T loadJson(Class<T> clazz, int rawId) {
         Gson gson = new Gson();
+        T t = null;
 
-        try (InputStreamReader reader = new InputStreamReader(new GZIPInputStream(context.getResources().openRawResource(resId)))) {
-            return gson.fromJson(reader, clazz);
+        try (InputStreamReader reader = new InputStreamReader(new GZIPInputStream(context.getResources().openRawResource(rawId)))) {
+            t = gson.fromJson(reader, clazz);
         } catch (IOException e) {
             Log.e(TAG, "文件读取错误");
         }
 
-        return null;
+        return t;
 
     }
 }

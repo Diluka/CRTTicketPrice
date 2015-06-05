@@ -8,6 +8,7 @@ import com.github.diluka.crtticketprice.R;
 import com.github.diluka.crtticketprice.entity.TicketPrice;
 import com.github.diluka.crtticketprice.util.JSONDataLoader;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -29,9 +30,35 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     // any time you make changes to your database objects, you may have to increase the database version
     private static final int DATABASE_VERSION = 1;
 
+    // the DAO object we use to access the SimpleData table
+    private Dao<TicketPrice, Integer> simpleDao = null;
+    private RuntimeExceptionDao<TicketPrice, Integer> simpleRuntimeDao = null;
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
         this.context=context;
+    }
+
+    /**
+     * Returns the Database Access Object (DAO) for our SimpleData class. It will create it or just give the cached
+     * value.
+     */
+    public Dao<TicketPrice,Integer> getDao()throws SQLException {
+        if (simpleDao == null) {
+            simpleDao = getDao(TicketPrice.class);
+        }
+        return simpleDao;
+    }
+
+    /**
+     * Returns the RuntimeExceptionDao (Database Access Object) version of a Dao for our SimpleData class. It will
+     * create it or just give the cached value. RuntimeExceptionDao only through RuntimeExceptions.
+     */
+    public RuntimeExceptionDao<TicketPrice, Integer> getTicketPriceDao() {
+        if (simpleRuntimeDao == null) {
+            simpleRuntimeDao = getRuntimeExceptionDao(TicketPrice.class);
+        }
+        return simpleRuntimeDao;
     }
 
     @Override
@@ -51,7 +78,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         //TODO 从data.json中导入初始化数据
         Log.i(TAG,"初始化数据库...");
         JSONDataLoader dataLoader=new JSONDataLoader(context);
-        TicketPrice[] ticketPrices = dataLoader.loadJson(TicketPrice[].class, R.raw.data);
+        TicketPrice[] ticketPrices = dataLoader.loadJson(TicketPrice[].class, R.raw.data_json_gz);
 
         RuntimeExceptionDao<TicketPrice,Integer> dao=getRuntimeExceptionDao(TicketPrice.class);
         for (TicketPrice tp:ticketPrices){
@@ -77,5 +104,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             Log.e(DatabaseHelper.class.getName(), "Can't drop databases", e);
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Close the database connections and clear any cached DAOs.
+     */
+    @Override
+    public void close() {
+        super.close();
+        simpleDao = null;
+        simpleRuntimeDao = null;
     }
 }
