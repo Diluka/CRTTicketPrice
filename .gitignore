@@ -33,3 +33,4 @@ build/
 captures/
 .idea/
 *.iml
+.svn/

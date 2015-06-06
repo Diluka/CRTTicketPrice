@@ -7,6 +7,8 @@ import android.util.Log;
 import com.github.diluka.crtticketprice.R;
 import com.github.diluka.crtticketprice.entity.TicketPrice;
 import com.github.diluka.crtticketprice.util.JSONDataLoader;
+import com.github.stuxuhai.jpinyin.PinyinFormat;
+import com.github.stuxuhai.jpinyin.PinyinHelper;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
@@ -28,7 +30,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     // name of the database file for your application -- change to something appropriate for your app
     private static final String DATABASE_NAME = "CRTTicketPrice.db";
     // any time you make changes to your database objects, you may have to increase the database version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // the DAO object we use to access the SimpleData table
     private Dao<TicketPrice, Integer> simpleDao = null;
@@ -82,6 +84,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         RuntimeExceptionDao<TicketPrice,Integer> dao=getRuntimeExceptionDao(TicketPrice.class);
         for (TicketPrice tp:ticketPrices){
+            tp.lineName1Pinyin=PinyinHelper.convertToPinyinString(tp.lineName1,"", PinyinFormat.WITHOUT_TONE);
+            tp.lineName2Pinyin=PinyinHelper.convertToPinyinString(tp.lineName2,"", PinyinFormat.WITHOUT_TONE);
+            tp.stationName1Pinyin=PinyinHelper.convertToPinyinString(tp.stationName1,"", PinyinFormat.WITHOUT_TONE);
+            tp.stationName2Pinyin=PinyinHelper.convertToPinyinString(tp.stationName2,"", PinyinFormat.WITHOUT_TONE);
+
             if(dao.create(tp)!=1){
                 Log.i(TAG,"插入数据失败："+tp);
             }

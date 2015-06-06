@@ -1,5 +1,5 @@
 #
-# generated on 2015/06/05 12:39:42
+# generated on 2015/06/06 01:37:42
 #
 # --table-start--
 dataClass=com.github.diluka.crtticketprice.entity.TicketPrice
@@ -20,6 +20,10 @@ fieldName=lineName1
 columnName=line_name_1
 # --field-end--
 # --field-start--
+fieldName=lineName1Pinyin
+columnName=line_name_1_pinyin
+# --field-end--
+# --field-start--
 fieldName=stationId1
 columnName=station_id_1
 indexName=station_id_1_idx
@@ -27,6 +31,10 @@ indexName=station_id_1_idx
 # --field-start--
 fieldName=stationName1
 columnName=station_name_1
+# --field-end--
+# --field-start--
+fieldName=stationName1Pinyin
+columnName=station_name_1_pinyin
 # --field-end--
 # --field-start--
 fieldName=lineId2
@@ -38,6 +46,10 @@ fieldName=lineName2
 columnName=line_name_2
 # --field-end--
 # --field-start--
+fieldName=lineName2Pinyin
+columnName=line_name_2_pinyin
+# --field-end--
+# --field-start--
 fieldName=stationId2
 columnName=station_id_2
 indexName=station_id_2_idx
@@ -45,6 +57,10 @@ indexName=station_id_2_idx
 # --field-start--
 fieldName=stationName2
 columnName=station_name_2
+# --field-end--
+# --field-start--
+fieldName=stationName2Pinyin
+columnName=station_name_2_pinyin
 # --field-end--
 # --field-start--
 fieldName=price

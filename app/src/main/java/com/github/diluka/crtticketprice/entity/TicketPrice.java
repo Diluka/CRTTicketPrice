@@ -16,12 +16,16 @@ public class TicketPrice {
     public static final String ID_FIELD_NAME = "id";
     public static final String LINE_ID_1_FIELD_NAME = "line_id_1";
     public static final String LINE_NAME_1_FIELD_NAME = "line_name_1";
+    public static final String LINE_NAME_1_PINYIN_FIELD_NAME = "line_name_1_pinyin";
     public static final String STATION_ID_1_FIELD_NAME = "station_id_1";
     public static final String STATION_NAME_1_FIELD_NAME = "station_name_1";
+    public static final String STATION_NAME_1_PINYIN_FIELD_NAME = "station_name_1_pinyin";
     public static final String LINE_ID_2_FIELD_NAME = "line_id_2";
     public static final String LINE_NAME_2_FIELD_NAME = "line_name_2";
+    public static final String LINE_NAME_2_PINYIN_FIELD_NAME = "line_name_2_pinyin";
     public static final String STATION_ID_2_FIELD_NAME = "station_id_2";
     public static final String STATION_NAME_2_FIELD_NAME = "station_name_2";
+    public static final String STATION_NAME_2_PINYIN_FIELD_NAME = "station_name_2_pinyin";
     public static final String PRICE_FIELD_NAME = "price";
     //</editor-fold>
 
@@ -32,19 +36,27 @@ public class TicketPrice {
     public String lineId1;
     @DatabaseField(columnName = "line_name_1")
     public String lineName1;
+    @DatabaseField(columnName = "line_name_1_pinyin")
+    public String lineName1Pinyin;
     @DatabaseField(index = true, indexName = "station_id_1_idx", columnName = "station_id_1")
     public String stationId1;
     @DatabaseField(columnName = "station_name_1")
     public String stationName1;
+    @DatabaseField(columnName = "station_name_1_pinyin")
+    public String stationName1Pinyin;
 
     @DatabaseField(index = true, indexName = "line_id_2_idx", columnName = "line_id_2")
     public String lineId2;
     @DatabaseField(columnName = "line_name_2")
     public String lineName2;
+    @DatabaseField(columnName = "line_name_2_pinyin")
+    public String lineName2Pinyin;
     @DatabaseField(index = true, indexName = "station_id_2_idx", columnName = "station_id_2")
     public String stationId2;
     @DatabaseField(columnName = "station_name_2")
     public String stationName2;
+    @DatabaseField(columnName = "station_name_2_pinyin")
+    public String stationName2Pinyin;
 
     @DatabaseField(columnName = "price", dataType = DataType.INTEGER, defaultValue = "0")
     public int price;
