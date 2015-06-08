@@ -79,7 +79,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         //TODO 从data.json中导入初始化数据
         Log.i(TAG,"初始化数据库...");
-        JSONDataLoader dataLoader=new JSONDataLoader(context);
+        JSONDataLoader dataLoader=new JSONDataLoader(context,R.raw.data_json_gz);
         TicketPrice[] ticketPrices = dataLoader.loadJson(TicketPrice[].class, R.raw.data_json_gz);
 
         RuntimeExceptionDao<TicketPrice,Integer> dao=getRuntimeExceptionDao(TicketPrice.class);
@@ -94,7 +94,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             }
         }
 
-        Log.i(TAG,String.format("初始化数据库完成，耗时：%d ms",System.currentTimeMillis()-start));
+        Log.i(TAG,String.format("初始化数据库完成，耗时：%f ms",(System.currentTimeMillis()-start)/1000.0));
     }
 
     @Override

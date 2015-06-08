@@ -7,7 +7,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.Objects;
 
 /**
- * Created by Diluka on 2015-06-04.
+ * 票价信息实体类
  */
 @DatabaseTable(tableName = "ticket_price")
 public class TicketPrice {
@@ -157,5 +157,42 @@ public class TicketPrice {
     public void setPrice(int price) {
         this.price = price;
     }
+
+    public static String getIdFieldName() {
+        return ID_FIELD_NAME;
+    }
+
+    public String getLineName1Pinyin() {
+        return lineName1Pinyin;
+    }
+
+    public void setLineName1Pinyin(String lineName1Pinyin) {
+        this.lineName1Pinyin = lineName1Pinyin;
+    }
+
+    public String getStationName1Pinyin() {
+        return stationName1Pinyin;
+    }
+
+    public void setStationName1Pinyin(String stationName1Pinyin) {
+        this.stationName1Pinyin = stationName1Pinyin;
+    }
+
+    public String getLineName2Pinyin() {
+        return lineName2Pinyin;
+    }
+
+    public void setLineName2Pinyin(String lineName2Pinyin) {
+        this.lineName2Pinyin = lineName2Pinyin;
+    }
+
+    public String getStationName2Pinyin() {
+        return stationName2Pinyin;
+    }
+
+    public void setStationName2Pinyin(String stationName2Pinyin) {
+        this.stationName2Pinyin = stationName2Pinyin;
+    }
+
     //</editor-fold>
 }

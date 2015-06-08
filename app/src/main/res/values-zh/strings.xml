@@ -4,4 +4,8 @@
     <string name="action_settings">设置</string>
     <string name="hello_world">你好，世界！</string>
     <string name="db_result_tpl">当前数据库中有%d条数据。</string>
+    <string name="station_name">车站名</string>
+    <string name="btn_ok">开始查询</string>
+    <string name="data_not_found">没有查询到数据。</string>
+    <string name="search_error">出现错误！</string>
 </resources>

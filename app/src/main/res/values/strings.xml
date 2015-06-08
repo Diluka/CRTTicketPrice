@@ -4,4 +4,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="db_result_tpl">There is %d record(s) in database.</string>
+    <string name="station_name">Station Name</string>
+    <string name="btn_ok">Search Now</string>
+    <string name="data_not_found">Data not found.</string>
+    <string name="search_error">Error!</string>
 </resources>
