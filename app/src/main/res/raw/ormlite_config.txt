@@ -1,9 +1,78 @@
 #
-# generated on 2015/06/06 01:37:42
+# generated on 2015/09/26 01:41:09
 #
 # --table-start--
-dataClass=com.github.diluka.crtticketprice.entity.TicketPrice
-tableName=ticket_price
+dataClass=com.github.diluka.crtticketprice.entity.Line
+tableName=line
+# --table-fields-start--
+# --field-start--
+fieldName=lineId
+columnName=line_id
+id=true
+# --field-end--
+# --field-start--
+fieldName=lineName
+columnName=line_name
+indexName=line_line_name_idx
+# --field-end--
+# --field-start--
+fieldName=lineNameFullPinyin
+columnName=line_name_full_pinyin
+indexName=line_line_name_full_pinyin_idx
+# --field-end--
+# --field-start--
+fieldName=lineNameShortPinyin
+columnName=line_name_short_pinyin
+indexName=line_line_name_short_pinyin_idx
+# --field-end--
+# --field-start--
+fieldName=stations
+foreignCollection=true
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.github.diluka.crtticketprice.entity.Station
+tableName=station
+# --table-fields-start--
+# --field-start--
+fieldName=stationId
+columnName=station_id
+id=true
+# --field-end--
+# --field-start--
+fieldName=stationName
+columnName=station_name
+indexName=station_station_name_idx
+# --field-end--
+# --field-start--
+fieldName=stationNameFullPinyin
+columnName=station_name_full_pinyin
+indexName=station_station_name_full_pinyin_idx
+# --field-end--
+# --field-start--
+fieldName=stationNameShortPinyin
+columnName=station_name_short_pinyin
+indexName=station_station_name_short_pinyin_idx
+# --field-end--
+# --field-start--
+fieldName=line
+columnName=line_id
+foreign=true
+foreignAutoRefresh=true
+foreignAutoCreate=true
+# --field-end--
+# --field-start--
+fieldName=tickets
+foreignCollection=true
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.github.diluka.crtticketprice.entity.Ticket
+tableName=ticket
 # --table-fields-start--
 # --field-start--
 fieldName=id
@@ -11,56 +80,32 @@ columnName=id
 generatedId=true
 # --field-end--
 # --field-start--
-fieldName=lineId1
+fieldName=line1
 columnName=line_id_1
-indexName=line_id_1_idx
+foreign=true
+foreignAutoRefresh=true
+foreignAutoCreate=true
 # --field-end--
 # --field-start--
-fieldName=lineName1
-columnName=line_name_1
-# --field-end--
-# --field-start--
-fieldName=lineName1Pinyin
-columnName=line_name_1_pinyin
-# --field-end--
-# --field-start--
-fieldName=stationId1
+fieldName=station1
 columnName=station_id_1
-indexName=station_id_1_idx
+foreign=true
+foreignAutoRefresh=true
+foreignAutoCreate=true
 # --field-end--
 # --field-start--
-fieldName=stationName1
-columnName=station_name_1
-# --field-end--
-# --field-start--
-fieldName=stationName1Pinyin
-columnName=station_name_1_pinyin
-# --field-end--
-# --field-start--
-fieldName=lineId2
+fieldName=line2
 columnName=line_id_2
-indexName=line_id_2_idx
+foreign=true
+foreignAutoRefresh=true
+foreignAutoCreate=true
 # --field-end--
 # --field-start--
-fieldName=lineName2
-columnName=line_name_2
-# --field-end--
-# --field-start--
-fieldName=lineName2Pinyin
-columnName=line_name_2_pinyin
-# --field-end--
-# --field-start--
-fieldName=stationId2
+fieldName=station2
 columnName=station_id_2
-indexName=station_id_2_idx
-# --field-end--
-# --field-start--
-fieldName=stationName2
-columnName=station_name_2
-# --field-end--
-# --field-start--
-fieldName=stationName2Pinyin
-columnName=station_name_2_pinyin
+foreign=true
+foreignAutoRefresh=true
+foreignAutoCreate=true
 # --field-end--
 # --field-start--
 fieldName=price

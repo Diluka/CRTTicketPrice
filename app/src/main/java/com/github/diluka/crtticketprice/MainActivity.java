@@ -1,37 +1,64 @@
 package com.github.diluka.crtticketprice;
 
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
+
+import com.github.diluka.crtticketprice.adapter.StationAdapter;
 import com.github.diluka.crtticketprice.dao.DatabaseHelper;
-import com.github.diluka.crtticketprice.entity.TicketPrice;
+import com.github.diluka.crtticketprice.entity.Line;
+import com.github.diluka.crtticketprice.entity.Station;
+import com.github.diluka.crtticketprice.entity.Ticket;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 
-import java.sql.SQLException;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OrmLiteDao;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.StringRes;
 
-
-public class MainActivity extends OrmLiteBaseActivity<DatabaseHelper> implements View.OnClickListener {
+@EActivity(R.layout.activity_main)
+public class MainActivity extends OrmLiteBaseActivity<DatabaseHelper> {
 
     private static final String TAG = "MainActivity";
 
+    @StringRes
+    String data_not_found, search_error, initialization,start_to_search;
+
+    @ViewById
     TextView tvResult;
-    EditText etStation1, etStation2;
+    @ViewById
+    AutoCompleteTextView etStation1, etStation2;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    @Bean
+    StationAdapter stationAdapter1;
+    @Bean
+    StationAdapter stationAdapter2;
 
-        bindComponents();
+    @OrmLiteDao(helper = DatabaseHelper.class)
+    RuntimeExceptionDao<Line, String> lineDAO;
+    @OrmLiteDao(helper = DatabaseHelper.class)
+    RuntimeExceptionDao<Station, String> stationDAO;
+    @OrmLiteDao(helper = DatabaseHelper.class)
+    RuntimeExceptionDao<Ticket, Integer> ticketDAO;
 
-        findViewById(R.id.btn_ok).setOnClickListener(this);
+
+    @AfterViews
+    void init() {
+        updateResultUI(initialization);
+        lineDAO.countOf();
+        updateResultUI(start_to_search);
+        etStation1.setAdapter(stationAdapter1);
+        etStation2.setAdapter(stationAdapter2);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -50,64 +77,44 @@ public class MainActivity extends OrmLiteBaseActivity<DatabaseHelper> implements
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_about) {
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("unchecked")
-    private void doSearch() {
-        String s1 = etStation1.getText().toString();
-        String s2 = etStation2.getText().toString();
-
+    @Background
+    void doSearch(String s1, String s2) {
         try {
-            RuntimeExceptionDao<TicketPrice, Integer> dao = getHelper().getTicketPriceDao();
-            QueryBuilder<TicketPrice, Integer> qb = dao.queryBuilder();
-            Where<TicketPrice, Integer> where = qb.where();
 
-            qb.setWhere(
-                    where.and(
-                            where.or(where.eq(TicketPrice.STATION_NAME_1_FIELD_NAME, s1),
-                                    where.eq(TicketPrice.STATION_NAME_1_PINYIN_FIELD_NAME, s1.toLowerCase())
-                            ),
-                            where.or(where.eq(TicketPrice.STATION_NAME_2_FIELD_NAME, s2),
-                                    where.eq(TicketPrice.STATION_NAME_2_PINYIN_FIELD_NAME, s2.toLowerCase())
-                                    )
-                    )
-            );
+            Long price=ticketDAO.queryRawValue("SELECT a.price FROM ticket a JOIN station b1 ON a.station_id_1=b1.station_id JOIN station b2 ON a.station_id_2=b2.station_id WHERE b1.station_name=? and b2.station_name=? LIMIT 1", s1, s2);
 
-            TicketPrice ticketPrice = qb.queryForFirst();
 
-            if(ticketPrice!=null){
-                tvResult.setText(ticketPrice.getPrice()+"");
-            }else{
-                tvResult.setText(getString(R.string.data_not_found));
+            if (price != null) {
+                updateResultUI("￥ %d", price);
+            } else {
+                updateResultUI(data_not_found);
             }
 
-        } catch (SQLException e) {
-            tvResult.setText(getString(R.string.search_error));
+        } catch (Exception e) {
+            updateResultUI(search_error);
         }
     }
 
-    private void checkDatabase(TextView tv) {
-        RuntimeExceptionDao<TicketPrice, Integer> dao = getHelper().getTicketPriceDao();
-        long count = dao.countOf();
-        tv.setText(String.format(getString(R.string.db_result_tpl), count));
-
+    @UiThread
+    void updateResultUI(String tpl, Object... objs) {
+        tvResult.setText(String.format(tpl, objs));
     }
 
-    private void bindComponents() {
-        tvResult = (TextView) findViewById(R.id.tvResult);
-        etStation1 = (EditText) findViewById(R.id.etStation1);
-        etStation2 = (EditText) findViewById(R.id.etStation2);
-    }
 
-    @Override
-    public void onClick(View v) {
+    @Click({R.id.btn_ok})
+    void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_ok:
-                doSearch();
+                doSearch(etStation1.getText().toString(), etStation2.getText().toString());
                 break;
         }
     }
+
 }

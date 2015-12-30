@@ -8,4 +8,8 @@
     <string name="btn_ok">开始查询</string>
     <string name="data_not_found">没有查询到数据。</string>
     <string name="search_error">出现错误！</string>
+    <string name="action_about">关于</string>
+    <string name="search_station">请输入您要搜索的车站名</string>
+    <string name="intialization">初始化中……</string>
+    <string name="start_to_search">输入车站名开始搜索</string>
 </resources>

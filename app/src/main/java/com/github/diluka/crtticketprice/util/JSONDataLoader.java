@@ -3,16 +3,27 @@ package com.github.diluka.crtticketprice.util;
 import android.content.Context;
 import android.util.Log;
 
-import com.github.diluka.crtticketprice.entity.TicketPrice;
+import com.github.diluka.crtticketprice.entity.Line;
+import com.github.diluka.crtticketprice.entity.Station;
+import com.github.diluka.crtticketprice.entity.Ticket;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
 import com.google.gson.Gson;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
-import java.io.*;
+import org.androidannotations.annotations.EBean;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -20,94 +31,65 @@ import java.util.zip.GZIPInputStream;
  *
  * @author Diluka
  */
-public class JSONDataLoader implements Closeable {
+public class JSONDataLoader {
 
     public static final String TAG = "JSONDataLoader";
 
 
     private Context context;
-    private final int rawId;
 
-    private InputStream inputStream;
-    private GZIPInputStream gzipInputStream;
-    private InputStreamReader inputStreamReader;
-    private BufferedReader reader;
-    private JSONArray array;
-    private int index=0;
-
-    public void Open() throws IOException, JSONException {
-        inputStream=context.getResources().openRawResource(rawId);
-        gzipInputStream=new GZIPInputStream(inputStream);
-        inputStreamReader=new InputStreamReader(gzipInputStream);
-        reader=new BufferedReader(inputStreamReader);
-
-        StringBuilder sb=new StringBuilder();
-        String line=reader.readLine();
-        while(line!=null){
-            sb.append(line);
-        }
-
-        JSONTokener tokener=new JSONTokener(sb.toString());
-        array= (JSONArray) tokener.nextValue();
+    public JSONDataLoader(Context context) {
+        this.context = context;
     }
 
-    public JSONDataLoader(Context ctx,int rawId) {
-        this.context = ctx;
-        this.rawId=rawId;
-    }
-
-    public TicketPrice nextObject(){
-        try {
-            JSONObject jsonObject = array.getJSONObject(index++);
-            TicketPrice ticketPrice=new TicketPrice();
-            ticketPrice.setLineId1(jsonObject.getString("lineId1"));
-            ticketPrice.setLineId2(jsonObject.getString("lineId2"));
-            ticketPrice.setLineName1(jsonObject.getString("lineName1"));
-            ticketPrice.setLineName2(jsonObject.getString("lineName2"));
-            ticketPrice.setStationId1(jsonObject.getString("stationId1"));
-            ticketPrice.setStationId2(jsonObject.getString("stationId2"));
-            ticketPrice.setStationName1(jsonObject.getString("stationName1"));
-            ticketPrice.setStationName2(jsonObject.getString("stationName2"));
-            ticketPrice.setPrice(jsonObject.getInt("price"));
-
-            ticketPrice.setLineName1Pinyin(PinyinHelper.convertToPinyinString(ticketPrice.getLineName1(), "", PinyinFormat.WITHOUT_TONE));
-            ticketPrice.setLineName2Pinyin(PinyinHelper.convertToPinyinString(ticketPrice.getLineName2(), "", PinyinFormat.WITHOUT_TONE));
-            ticketPrice.setStationName1Pinyin(PinyinHelper.convertToPinyinString(ticketPrice.getStationName1Pinyin(), "", PinyinFormat.WITHOUT_TONE));
-            ticketPrice.setStationName2Pinyin(PinyinHelper.convertToPinyinString(ticketPrice.getStationName2Pinyin(), "", PinyinFormat.WITHOUT_TONE));
-
-            return ticketPrice;
-        } catch (JSONException e) {
-            return null;
-        }
-    }
-
-    public <T> T loadJson(Class<T> clazz, int rawId) {
+    public Map<String, Collection> loadJson(int rawId) {
         Gson gson = new Gson();
-        T t = null;
+        Map<String, Collection> map = new HashMap<>();
 
         try (InputStreamReader reader = new InputStreamReader(new GZIPInputStream(context.getResources().openRawResource(rawId)))) {
-            t = gson.fromJson(reader, clazz);
+            JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+            Map<String, Line> lines = new HashMap<>();
+            Map<String, Station> stations = new HashMap<>();
+            List<Ticket> tickets = new ArrayList<>();
+
+            for (JsonElement lineJson : jsonObject.get("lines").getAsJsonArray()) {
+                Line line = new Line();
+                line.lineName = lineJson.getAsJsonObject().get("lineName").getAsString();
+                line.lineId = lineJson.getAsJsonObject().get("lineId").getAsString();
+                line.lineNameFullPinyin = PinyinHelper.convertToPinyinString(line.lineName, "", PinyinFormat.WITHOUT_TONE);
+                line.lineNameShortPinyin = PinyinHelper.getShortPinyin(line.lineName);
+                lines.put(line.lineId, line);
+            }
+
+            for (JsonElement stationJson : jsonObject.get("stations").getAsJsonArray()) {
+                Station station = new Station();
+                station.stationId = stationJson.getAsJsonObject().get("stationId").getAsString();
+                station.stationName = stationJson.getAsJsonObject().get("stationName").getAsString();
+                station.stationNameFullPinyin = PinyinHelper.convertToPinyinString(station.stationName, "", PinyinFormat.WITHOUT_TONE);
+                station.stationNameShortPinyin = PinyinHelper.getShortPinyin(station.stationName);
+                station.line = lines.get(stationJson.getAsJsonObject().get("lineId").getAsString());
+                stations.put(station.stationId, station);
+            }
+
+            for (JsonElement ticketJson : jsonObject.get("tickets").getAsJsonArray()) {
+                Ticket ticket = new Ticket();
+                ticket.line1 = lines.get(ticketJson.getAsJsonObject().get("lineId1").getAsString());
+                ticket.line2 = lines.get(ticketJson.getAsJsonObject().get("lineId2").getAsString());
+                ticket.station1 = stations.get(ticketJson.getAsJsonObject().get("stationId1").getAsString());
+                ticket.station2 = stations.get(ticketJson.getAsJsonObject().get("stationId2").getAsString());
+                ticket.price = ticketJson.getAsJsonObject().get("price").getAsInt();
+                tickets.add(ticket);
+            }
+
+            map.put("lines", lines.values());
+            map.put("stations", stations.values());
+            map.put("tickets", tickets);
+
         } catch (IOException e) {
             Log.e(TAG, "文件读取错误");
         }
 
-        return t;
+        return map;
 
-    }
-
-    @Override
-    public void close() throws IOException {
-        if(reader!=null){
-            reader.close();
-        }
-        if(inputStreamReader!=null){
-            inputStreamReader.close();
-        }
-        if (gzipInputStream!=null){
-            gzipInputStream.close();
-        }
-        if (inputStream!=null){
-            inputStream.close();
-        }
     }
 }

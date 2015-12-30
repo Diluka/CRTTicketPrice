@@ -1,7 +1,9 @@
 package com.github.diluka.crtticketprice.util;
 
 
-import com.github.diluka.crtticketprice.entity.TicketPrice;
+import com.github.diluka.crtticketprice.entity.Line;
+import com.github.diluka.crtticketprice.entity.Station;
+import com.github.diluka.crtticketprice.entity.Ticket;
 import com.j256.ormlite.android.apptools.OrmLiteConfigUtil;
 
 import java.io.IOException;
@@ -15,7 +17,7 @@ import java.sql.SQLException;
  */
 public class DatabaseConfigUtil extends OrmLiteConfigUtil {
 
-    private static final Class<?>[] CLASSES={TicketPrice.class};
+    private static final Class<?>[] CLASSES={Line.class, Station.class, Ticket.class};
 
     public static void main(String[] args) throws SQLException, IOException {
         writeConfigFile("ormlite_config.txt",CLASSES);
